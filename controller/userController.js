@@ -36,34 +36,43 @@ export const currentPlayingSong = async (req, res) => {
 
 export const pauseSong = async (req, res) => {
     try {
-        const response = await axios.put("https://api.spotify.com/v1/me/player/pause", {
-            headers: {
-                Authorization: `Bearer ${req.token}`,
-            },
-        });
+        const response = await axios.put(
+            "https://api.spotify.com/v1/me/player/pause",
+            {}, // no request body
+            {
+                headers: {
+                    Authorization: `Bearer ${req.token}`,
+                },
+            }
+        );
 
         res.json(response.data);
     } catch (error) {
-        // console.error("Error pausing song:", error);
         res.status(500).json({ error: "Failed to pause song" });
     }
 };
 
+
 export const playSong = async (req, res) => {
     try {
-        const response = await axios.put("https://api.spotify.com/v1/me/player/play", {
-            headers: {
-                Authorization: `Bearer ${req.token}`,
-            },
-            data: JSON.stringify({
+        const response = await axios.put(
+            "https://api.spotify.com/v1/me/player/play",
+            {
                 uris: [req.body.uri],
-                device_id: req.body.device_id
-            })
-        });
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${req.token}`,
+                    "Content-Type": "application/json",
+                },
+                params: {
+                    device_id: req.body.device_id,
+                }
+            }
+        );
 
         res.json(response.data);
     } catch (error) {
-        // console.error("Error playing song:", error);
         res.status(500).json({ error: "Failed to play song" });
     }
 };
